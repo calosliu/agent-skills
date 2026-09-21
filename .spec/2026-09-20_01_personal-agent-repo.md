@@ -2,7 +2,7 @@
 
 - Created: 2026-09-20
 - Updated: 2026-09-22
-- Status: In progress — live installation and Pi/Codex model-backed acceptance passed; fresh-machine restoration, source pinning, and deferred skill inventory remain.
+- Status: In progress — live installation and model-backed acceptance passed; fresh-machine authentication/smokes, third-party skill commit pinning, and deferred skill inventory remain.
 - Goal: Clone this repo, install once, and use shared personal guidance and portable skills in Pi and Codex.
 - Approach: Personal agent dotfiles, not another agent framework.
 
@@ -132,7 +132,7 @@ Existing useful third-party workflows (`diagnose`, `handoff`, `write-a-skill`) r
 - [x] Run `bash scripts/check.sh` and directly verify the installed `ship-it` symlink/content in an isolated home.
 - [x] Perform an explicitly authorized model-backed ship-it safety smoke in disposable local repos. Both agents loaded the skill and stopped without mutation when no remote existed; no real commit/push/PR was requested from the fixture.
 
-Evidence: repository checks passed with both owned skills. A separate temporary-HOME probe confirmed ship-it dry-run creates nothing, its installed symlink resolves to the exact skill content, and reinstall preserves the link inode. The skill is 68 lines; README registration and workflow/safety elements were checked. Local Git/gh help confirmed documented flags and PR JSON fields. No real staging, commit, push, PR, or live installation was performed. Model execution remains unverified.
+Evidence: repository checks passed with both owned skills. Temporary-HOME probes confirmed dry-run safety, exact installed content, and reinstall stability. Model smokes used disposable local repositories, bare remotes, and fake `gh` to verify exact staging, feature-branch pushes, PR create/reuse, unrelated-change preservation, and failure stops. No real GitHub repository, PR, visibility, or protection setting was changed.
 
 ## 5. Verification and acceptance
 
@@ -188,6 +188,7 @@ Deferred until needed:
 | 2026-09-22 | Live canonical-home install and rerun | Pi/Codex managed blocks installed; existing bytes outside blocks and exact backups verified; six rule links and two skill links resolve; rerun changed no files/backups |
 | 2026-09-22 | Codex relative-reference repro, installer fix, Bash 3.2/current Bash checks, LSP | Initial reads failed against scratch cwd; generated absolute installed paths fixed it; both suites passed and shell diagnostics were clean |
 | 2026-09-22 | Pi/Codex fresh-session instruction and skill probes | All three personal rules plus project token read; implement-spec succeeded in disposable repos; ship-it stopped safely with no remote and no repository mutation |
+| 2026-09-22 | Fresh local clone of `60fadf0` with isolated HOME | `git clone --no-local` followed by check, dry-run, install, and offline doctor all passed; real new-machine auth/model smoke remains pending |
 
 Native probe used an ephemeral test program calling the installed Pi SDK and Codex app-server. It inspected actual loader output, not model claims. Repeatable model-backed smoke procedure is in `README.md`; `scripts/check.sh` remains dependency-free and does not require installed agents.
 
