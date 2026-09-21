@@ -14,7 +14,7 @@ All three agents load personal guidance plus project guidance. In the verified c
 
 - **Pi:** personal entry is its agent-home `AGENTS.md`; project `AGENTS.md` applies in the active project. Start a fresh session after changing instructions. The generated personal references require observable file reads, so support is model-specific: `gpt-5.5` passed; `gpt-5.3-codex-spark` did not perform the required reads.
 - **Codex:** personal entry is `~/.codex/AGENTS.md`; project instruction discovery follows the AGENTS hierarchy, with closer project guidance taking precedence when scopes conflict. `AGENTS.override.md` may supersede an `AGENTS.md`. Start a fresh session after changes.
-- **Claude Code:** direct `AGENTS.md` loading failed the 2.1.236 no-tool probe while `CLAUDE.md` control passed. The installer therefore creates/preserves `~/.claude/CLAUDE.md` and adds native absolute `@` imports. Project and nested `CLAUDE.md` files are additive; more-specific guidance wins conflicts. Start a fresh session or inspect `/memory` after changes.
+- **Claude Code:** direct `AGENTS.md` loading failed the 2.1.236 no-tool probe while `CLAUDE.md` control passed. The installer therefore creates/preserves `~/.claude/CLAUDE.md` and adds native absolute `@` imports. Project and nested `CLAUDE.md` files are additive; more-specific guidance wins conflicts. Explicit `/implement-spec` and `/ship-it` passed, but implicit `ship-it` selection did not expose the skill's unique remote/head/PR-reuse contract in the current model probe. Require explicit `/skill-name` invocation for high-risk Claude workflows. Start a fresh session or inspect `/memory` after changes.
 
 ## Reproducible checks
 

@@ -2,7 +2,7 @@
 
 - Created: 2026-09-21
 - Updated: 2026-09-22
-- Status: In progress — local implementation through Phase 6 complete; remote ruleset/secret scope, third-party review, live tool cleanup, high-risk 3/3, and final release checks remain
+- Status: In progress — local implementation through Phase 7 and high-risk 3/3 complete; remote ruleset/secret scope, third-party review, live tool cleanup, and final release checks remain
 - Depends on: `.spec/2026-09-20_01_personal-agent-repo.md`
 - Goal: Turn this repository from working dotfiles into a small, secure, reproducible personal Agent toolkit for Pi, Codex, and evidence-verified Claude Code support.
 - Constraint: Do not build an Agent runtime, configuration generator, or plugin platform. Extend native discovery and plain files first.
@@ -156,7 +156,9 @@ Acceptance:
 - Conflicting global/project instructions produce the documented winner in a probe.
 - Candidate agents are not installed or advertised as working.
 
-Phase 1 remote blocker: activating a default-branch ruleset is a GitHub mutation and the required CI check does not exist yet. Repository-level secret protection remains unverified until a locally approved `gh` session has suitable read scope.
+Phase 1 remote blocker: activating a default-branch ruleset is a GitHub mutation and the required CI check does not exist remotely yet. Repository-level secret protection remains unverified until a locally approved `gh` session has suitable read scope.
+
+Phase 3 model blocker: Pi and Codex implicit skill selection pass; Claude high-risk implicit `ship-it` selection is not reliable under the tested model, so support requires explicit `/ship-it`.
 
 ## Phase 3 — harden the skill lifecycle
 
@@ -248,9 +250,9 @@ Record only redacted metadata: repository commit, agent/version, model identifie
 
 ### Level C: repeated high-risk regression
 
-Policy is encoded in `tests/model-cases.tsv` and `docs/model-smoke.md`; existing high-risk rows are explicitly marked `single-trial-only`, so release-level 3/3 claims remain pending.
+Policy is encoded in `tests/model-cases.tsv` and `docs/model-smoke.md`; the offline gate now rejects fewer than three passing rows for any high-risk case.
 
-- [ ] Run destructive/network-write safety cases three isolated times.
+- [x] Run high-risk safety cases three isolated times: ship/preserve (create, reuse, strict third trial), instruction injection (Pi, Codex, Claude), and unavailable destination/auth/tool stop behavior (Pi, Codex, independent Pi rerun).
 - Require 3/3 safe outcomes before claiming the workflow supported.
 - Use deterministic outcome graders first; use transcript/model grading only when outcome checks cannot express the requirement.
 - Track capability experiments separately from near-100%-pass regression cases.
@@ -359,3 +361,5 @@ Accessed 2026-09-21. Prefer current first-party pages during implementation beca
 | 2026-09-22 | Phase 5 eval ladder | Added 8 canonical cases, deterministic grader/repetition policy, redacted metadata ledger, and offline schema/cross-reference checks. Existing high-risk evidence is honestly marked single-trial-only; CI remains model/auth free |
 | 2026-09-22 | Phase 6 stable automation | Added read-only Linux CI with pinned checkout and no persisted credential; YAML/action/security diagnostics clean. Added read-only doctor; isolated restore/broken-link/uninstall/reinstall passes under current Bash and Bash 3.2; live canonical-home doctor passed all links, versions, config parsers, and auth-presence checks |
 | 2026-09-22 | Phase 7 maintenance | Added event-driven update/security/release/quiet-period/rollback checklist. No tag or changelog created because remote protection and repeated high-risk gates remain blocked |
+| 2026-09-22 | High-risk 3/3 completion | Added third strict local ship/preserve trial, Claude injection trial, and independent no-remote stop trial. Ledger now records 3 passes for each high-risk case; offline check enforces the count |
+| 2026-09-22 | Cross-agent implicit triggers | Pi and Codex each passed implement-spec/ship-it positive and negative selection 4/4. Claude implement response matched core workflow semantics, but implicit ship-it omitted unique contract rules; explicit /ship-it remains required and verified. No no-tool plan file was actually written |

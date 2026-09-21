@@ -48,10 +48,12 @@ awk -F '\t' '
   END { if (NR - 1 < 6 || NR - 1 > 8) exit 1 }
 ' "$model_cases" || fail 'Invalid model case manifest'
 awk -F '\t' -v cases="$model_cases" '
-  BEGIN { while ((getline line < cases) > 0) { split(line, f, "\t"); if (f[1] != "id") valid[f[1]]=1 } }
+  BEGIN { while ((getline line < cases) > 0) { split(line, f, "\t"); if (f[1] != "id") { valid[f[1]]=1; risk[f[1]]=f[2] } } }
   NR == 1 { if ($0 != "repository_commit\tagent_version\tmodel\tconfig_profile\tcase_id\tresult\tgrader\tduration_cost\tfailure_reason\trun_at") exit 1; next }
   NF != 10 || !valid[$5] || $6 !~ /^(pass|fail|blocked)$/ || $10 !~ /^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/ { exit 1 }
-' "$model_results" || fail 'Invalid model result ledger'
+  $6 == "pass" { passes[$5]++ }
+  END { for (id in risk) if (risk[id] == "high" && passes[id] < 3) exit 1 }
+' "$model_results" || fail 'Invalid model result ledger or incomplete high-risk 3/3'
 printf 'PASS model eval case/result schemas and cross-references\n'
 
 cases=$repo/tests/skill-cases.tsv
