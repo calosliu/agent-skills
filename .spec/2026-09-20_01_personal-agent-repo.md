@@ -1,8 +1,8 @@
 # Personal agent repo setup
 
 - Created: 2026-09-20
-- Updated: 2026-09-21
-- Status: In progress — single default managed-reference installer implemented and offline checks passed; live installation and model-backed linked-rule acceptance pending.
+- Updated: 2026-09-22
+- Status: In progress — live installation and Pi/Codex model-backed acceptance passed; fresh-machine restoration, source pinning, and deferred skill inventory remain.
 - Goal: Clone this repo, install once, and use shared personal guidance and portable skills in Pi and Codex.
 - Approach: Personal agent dotfiles, not another agent framework.
 
@@ -14,9 +14,9 @@ Update this file as work proceeds. Check tasks only after verification; record e
 | --- | --- |
 | 1. Inventory | Complete; remote is PUBLIC, existing shared skills are third-party |
 | 2. Structure and guidance | Complete |
-| 3. Installation | Revised to managed reference block + adjacent rule links; isolated tests passed; live installation not performed |
+| 3. Installation | Complete on this macOS host; live Pi/Codex files installed with backups and idempotence verified |
 | 4. Skill migration | Partial; two new owned skills, third-party content preserved, 3–5 owned workflows not identified |
-| 5. Verification | Revised installer offline checks passed; earlier native skill discovery passed; linked-rule model execution and fresh-machine acceptance pending |
+| 5. Verification | Offline, native discovery, linked-rule reads, and owned-skill model smokes passed; fresh-machine acceptance pending |
 
 ## Target layout
 
@@ -89,7 +89,7 @@ Pi 0.86.0 and Codex CLI 0.153.4 both discovered the installed shared skill in an
 - [x] Add sanitized Pi and Codex configuration examples; preserve existing settings through manual integration initially.
 - [x] Support absolute `PI_CODING_AGENT_DIR` and `CODEX_HOME` overrides; reject empty, relative, and root destinations. Shared skill destination remains under `$HOME`.
 - [x] Implement the user's chosen default: preserve/create AGENTS.md, insert a begin/end section, split rules by concern, link them beside AGENTS.md, and reference them from that section.
-- [ ] Run the revised installer into real agent homes; regular existing Codex instructions are no longer a design conflict.
+- [x] Run the revised installer into real agent homes; exact backups, managed-block exterior bytes, six rule links, two skill links, and idempotent rerun verified.
 
 Do not symlink entire agent configuration directories. Agents may rewrite settings; credentials and runtime state remain local. Known target conflicts are preflighted before any links are created. Unexpected I/O errors may leave some newly created links; reruns resume safely. Concurrent installers are intentionally unsupported.
 
@@ -99,12 +99,12 @@ User rejected multiple installation modes. Keep only normal installation plus no
 
 - [x] Preserve/create regular AGENTS.md; manage exactly one `<!-- agent-skills:begin -->` / `<!-- agent-skills:end -->` section.
 - [x] Split rules into three independent topic files and remove the former monolithic `instructions/AGENTS.md`.
-- [x] Create prefixed file symlinks beside each agent's AGENTS.md and generate explicit relative read links.
+- [x] Create prefixed file symlinks beside each agent's AGENTS.md. Initial relative read links failed a real Codex model probe because Codex resolved them against the project cwd; generate per-agent absolute installed paths instead.
 - [x] Append or replace only the managed section; preserve outside bytes, including CRLF and missing final newline.
 - [x] Back up changed existing files, retain permissions, and atomically replace each file; reruns leave files/links/backups unchanged.
 - [x] Reject broken/duplicate/out-of-order/inline markers, NUL text, AGENTS.md symlinks/directories, and conflicting rule/skill targets before writes.
 - [x] Verify edits to linked rule contents are visible immediately and rule additions/removals refresh references on rerun.
-- [ ] Verify real Pi/Codex model tool reads of all linked rules. Markdown references are explicit instructions, not guaranteed automatic imports.
+- [x] Verify real Pi/Codex model tool reads of all referenced rules. Relative references failed Codex and were replaced by generated absolute installed paths; current probes show actual tool reads.
 
 Sources remain portable plain Markdown. Rule filenames use lowercase kebab-case; generated links use the `agent-skills-` prefix to avoid generic-name collisions. Orphaned links are not automatically deleted. Existing override files stay untouched and may supersede AGENTS.md.
 
@@ -130,7 +130,7 @@ Existing useful third-party workflows (`diagnose`, `handoff`, `write-a-skill`) r
 - [x] Add portable `skills/ship-it/SKILL.md` for scoped commit → feature-branch push → GitHub PR creation/reuse.
 - [x] Verify frontmatter/name, concise instructions, explicit authorization, unrelated-change protection, failure stops, and README registration.
 - [x] Run `bash scripts/check.sh` and directly verify the installed `ship-it` symlink/content in an isolated home.
-- [ ] Perform an explicitly authorized model-backed GitHub smoke test; real commit/push/PR creation is not part of adding this skill.
+- [x] Perform an explicitly authorized model-backed ship-it safety smoke in disposable local repos. Both agents loaded the skill and stopped without mutation when no remote existed; no real commit/push/PR was requested from the fixture.
 
 Evidence: repository checks passed with both owned skills. A separate temporary-HOME probe confirmed ship-it dry-run creates nothing, its installed symlink resolves to the exact skill content, and reinstall preserves the link inode. The skill is 68 lines; README registration and workflow/safety elements were checked. Local Git/gh help confirmed documented flags and PR JSON fields. No real staging, commit, push, PR, or live installation was performed. Model execution remains unverified.
 
@@ -149,14 +149,14 @@ Use `scripts/check.sh` and native/manual smoke tests. Installer tests use a temp
 - [x] Custom agent homes and invalid arguments are checked.
 - [x] Pi natively discovers the shared skill once without diagnostics.
 - [x] Codex natively discovers the same shared skill once, enabled, without skill errors.
-- [ ] Pi executes the shared skill against a scratch specification through a model-backed run.
-- [ ] Codex executes the same shared skill against a scratch specification through a model-backed run.
-- [ ] Both agents read/apply linked personal rules outside this repo: earlier Pi single-file loading was verified, but the new explicit linked-file behavior still needs model-backed verification.
-- [ ] Project-specific instructions still apply alongside linked personal guidance: earlier Pi context loading was verified; new behavioral verification pending.
+- [x] Pi executes `implement-spec` against a scratch specification through a model-backed run; exact output, sentinel preservation, check evidence, and actual SKILL read verified.
+- [x] Codex executes the same skill against a scratch specification through a model-backed run with the same outcome checks.
+- [x] Both agents read/apply all referenced personal rules outside this repo through observable tool calls.
+- [x] Project-specific instructions apply alongside personal guidance; both probes returned the scratch-only verification token.
 - [x] No credentials, sessions, caches, trust decisions, or memory databases are tracked. Bounded plaintext secret-pattern scan found no matches in new implementation files; this is not a complete secret audit.
 - [ ] Fresh-machine setup is exercised end to end: clone → install → configure/authenticate locally → model-backed smoke test. Instructions are documented; clean-machine run not performed.
 
-A successful shell script or resource-loader run does not prove model-backed execution. No authentication file was read or copied for the probes, and no model calls were made. Live global files were not modified.
+A successful shell script or resource-loader run does not prove model-backed execution, so fresh CLI model sessions were used. Authentication values were not read or copied. Live global files were modified only by the reviewed installer, which created exact adjacent backups.
 
 ## Scope boundaries
 
@@ -185,6 +185,9 @@ Deferred until needed:
 | 2026-09-21 | Isolated native probe: `codex app-server --strict-config --stdio`, JSON-RPC initialize then `skills/list` | Example config accepted; `implement-spec` discovered exactly once and enabled; no skill errors; no credentials/models used |
 | 2026-09-21 | Original single-file installer live dry-run (historical, superseded) | Expected exit 1 for existing Codex AGENTS.md; revised managed-block design removes this regular-file conflict |
 | 2026-09-21 | Bounded whitespace and plaintext secret-pattern scan, `git ls-files` | No findings in implementation files; tracked file list empty; no staging/commit/push |
+| 2026-09-22 | Live canonical-home install and rerun | Pi/Codex managed blocks installed; existing bytes outside blocks and exact backups verified; six rule links and two skill links resolve; rerun changed no files/backups |
+| 2026-09-22 | Codex relative-reference repro, installer fix, Bash 3.2/current Bash checks, LSP | Initial reads failed against scratch cwd; generated absolute installed paths fixed it; both suites passed and shell diagnostics were clean |
+| 2026-09-22 | Pi/Codex fresh-session instruction and skill probes | All three personal rules plus project token read; implement-spec succeeded in disposable repos; ship-it stopped safely with no remote and no repository mutation |
 
 Native probe used an ephemeral test program calling the installed Pi SDK and Codex app-server. It inspected actual loader output, not model claims. Repeatable model-backed smoke procedure is in `README.md`; `scripts/check.sh` remains dependency-free and does not require installed agents.
 
@@ -195,16 +198,19 @@ Native probe used an ephemeral test program calling the installed Pi SDK and Cod
 - Checked existing-text append, section replacement, CRLF/no-final-newline byte preservation, backups, permissions, preflight failures, source-rule changes, default/custom/shared homes, and idempotence.
 - LSP diagnostics: both changed shell scripts clean, 0 diagnostics.
 - Live `bash scripts/install.sh --dry-run`: exit 0; plans two AGENTS.md updates, six adjacent rule links, and one shared skill link. Existing Codex file is no longer a conflict. Directory snapshots and AGENTS.md hashes unchanged before/after.
-- No models called and no live agent files modified during implementation tests. Previous native skill-discovery evidence remains historical; it does not prove linked-rule reads.
+- Historical note: this statement described the pre-install test stage. On 2026-09-22, live installation and model-backed probes were performed with the evidence below.
+- Live install initially failed closed because Orca's injected `CODEX_HOME` exposes a symlinked AGENTS.md. Its target and canonical `~/.codex/AGENTS.md` were proven to share an inode; installation used explicit canonical `CODEX_HOME`.
+- Real Codex proved relative global references unsafe by resolving them against the project cwd. Generated absolute installed paths fixed the failure; Pi and Codex then read all three rules through observable tool calls.
+- Pi 0.86.1 / openai-codex gpt-5.5 and Codex CLI 0.153.4 passed instruction and implement-spec probes. Both agents safely stopped ship-it in no-remote fixtures. Pi gpt-5.3-codex-spark did not issue required reads and is not covered by the successful model claim.
 
 ## Blockers and next actions
 
-1. **Live installation pending:** existing regular `~/.codex/AGENTS.md` is now preserved and extended, not replaced by a symlink. Run the revised installer after reviewing its dry-run; arbitrary AGENTS.md symlinks or malformed managed blocks still require manual review.
-2. **Skill ownership:** all existing shared skills are third-party. Keep them external. Identify owned workflows before completing the original 3–5 migration target.
-3. **Third-party reproducibility:** recorded skill-folder hashes are not verified Git refs. Resolve reviewed upstream commit pins before claiming full third-party restoration.
-4. **Behavioral acceptance:** run the README smoke test in both agents and inspect actual tool reads of all linked rule files. Markdown references do not guarantee native inclusion. Authentication and model-backed calls remain local/manual.
-5. **Fresh machine:** exercise full setup on a clean environment. Linux behavior is intended but not yet tested on a Linux host; tested platform is macOS.
-6. **Publication:** remote is public. Review contents before any future commit/push; change visibility only on explicit request.
+1. **Skill ownership:** existing shared skills outside this repo remain third-party. Keep them external and identify owned workflows before completing the original 3–5 target.
+2. **Third-party reproducibility:** recorded skill-folder hashes are not verified Git refs. Resolve reviewed upstream commit pins before claiming full restoration.
+3. **Fresh machine:** exercise full setup on a clean environment. Linux behavior is intended but not tested on a Linux host; tested platform is macOS.
+4. **Model variability:** Pi gpt-5.3-codex-spark ignored explicit linked-rule read requests while gpt-5.5 passed. Behavioral support claims must name the tested model/configuration.
+5. **Orca environment:** Orca injects a runtime `CODEX_HOME` with symlinked AGENTS.md. Installer fails closed there; use canonical `CODEX_HOME=$HOME/.codex` only after verifying both paths resolve to the same file.
+6. **Publication:** remote is public. Review contents before future commit/push; change visibility only on explicit request.
 
 ## References
 
