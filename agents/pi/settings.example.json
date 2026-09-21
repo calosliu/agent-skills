@@ -1,0 +1,5 @@
+{
+  "defaultProjectTrust": "ask",
+  "enableSkillCommands": true,
+  "enableInstallTelemetry": false
+}

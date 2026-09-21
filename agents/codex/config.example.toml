@@ -1,0 +1,4 @@
+# Merge reviewed values into your own config.toml; do not replace existing settings.
+# Select a model and authenticate locally. No shared credentials or trust entries.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"

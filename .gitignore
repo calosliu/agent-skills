@@ -1,0 +1,20 @@
+# Local secrets and overrides
+.env
+.env.*
+!.env.example
+*.local.json
+*.local.toml
+auth.json
+credentials.json
+*.pem
+*.key
+
+# Agent runtime state; reviewed project settings may still be tracked
+.pi/*
+!.pi/settings.json
+!.pi/AGENTS.md
+.codex/
+.agents/
+node_modules/
+.DS_Store
+*.log
