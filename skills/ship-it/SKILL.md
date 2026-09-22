@@ -8,6 +8,13 @@ description: Commits scoped changes, pushes a feature branch, and creates or reu
 Complete commit → push → PR using Git and GitHub CLI (`gh`), without merging or deploying.
 Use the current harness's native tools; no plugin is required.
 
+## Contract
+
+- Input: agreed change scope plus optional repository, base, push remote, branch, commit message, and draft preference.
+- Prerequisites: a Git worktree, Git, authenticated `gh`, a resolvable writable remote, and project checks.
+- Side effects: may create a feature branch and commit, push that branch, and create or reuse one PR only after explicit authorization.
+- Stop conditions and required completion output are defined below; any unresolved destination, scope, secret, conflict, auth failure, or failed mandatory check blocks later writes.
+
 ## Authorization and boundaries
 
 - An explicit request to run `ship-it` authorizes this sequence for the agreed changes. Writing/discussing this skill does not. Honor narrower requests such as commit-only or draft PR.

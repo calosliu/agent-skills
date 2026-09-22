@@ -3,7 +3,7 @@
 set -euo pipefail
 
 usage() {
-  printf 'Usage: bash scripts/install.sh [--dry-run]\nUpdates a managed AGENTS.md section and links shared rules and owned skills.\n'
+  printf 'Usage: bash scripts/install.sh [--dry-run]\nUpdates managed agent instruction sections and links shared rules and owned skills.\n'
 }
 fail() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 [[ $# -le 1 ]] || { usage >&2; exit 2; }
@@ -19,15 +19,22 @@ repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 : "${HOME:?HOME must be set}"
 pi_home=${PI_CODING_AGENT_DIR-"$HOME/.pi/agent"}
 codex_home=${CODEX_HOME-"$HOME/.codex"}
-for dir in "$HOME" "$pi_home" "$codex_home"; do
+claude_home=${CLAUDE_CONFIG_DIR-"$HOME/.claude"}
+for dir in "$HOME" "$pi_home" "$codex_home" "$claude_home"; do
   [[ "$dir" == /* && "$dir" != / ]] || fail "Agent homes must be absolute, non-root paths: $dir"
 done
 export LC_ALL=C
 shopt -s nullglob
 rules=("$repo"/instructions/*.md)
 [[ ${#rules[@]} -gt 0 ]] || fail 'No shared instruction files found'
-agent_files=("$pi_home/AGENTS.md" "$codex_home/AGENTS.md")
-[[ "$pi_home" != "$codex_home" ]] || agent_files=("$pi_home/AGENTS.md")
+agent_files=("$pi_home/AGENTS.md")
+agent_kinds=(agents)
+if [[ "$pi_home" != "$codex_home" ]]; then
+  agent_files+=("$codex_home/AGENTS.md")
+  agent_kinds+=(agents)
+fi
+agent_files+=("$claude_home/CLAUDE.md")
+agent_kinds+=(claude)
 sources=() targets=()
 for rule in "${rules[@]}"; do
   name=${rule##*/}
@@ -41,8 +48,8 @@ for skill in "$repo"/skills/*; do
   [[ -d "$skill" && ! -L "$skill" && -s "$skill/SKILL.md" ]] || fail "Expected a local skill directory with SKILL.md: $skill"
   name=${skill##*/}
   [[ "$name" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ && ${#name} -le 64 ]] || fail "Invalid skill directory name: $name"
-  sources+=("$skill")
-  targets+=("$HOME/.agents/skills/$name")
+  sources+=("$skill" "$skill")
+  targets+=("$HOME/.agents/skills/$name" "$claude_home/skills/$name")
 done
 
 check_parent() {
@@ -57,19 +64,30 @@ check_parent() {
 correct_link() { [[ -L "$2" && "$(readlink "$2")" == "$1" ]]; }
 begin='<!-- agent-skills:begin -->'
 end='<!-- agent-skills:end -->'
-block="$begin"$'\n## Shared personal instructions\n\nRead and follow every linked rule file before starting work. Paths are relative to this AGENTS.md, not the project working directory. If a file cannot be read, report it rather than silently skipping it.\n'
-for rule in "${rules[@]}"; do
-  name=${rule##*/}
-  block+=$'\n'"- [${name%.md}](agent-skills-$name)"
-done
-block+=$'\n'"$end"
 
 # Keep every byte outside our section, including CRLF and missing final newlines.
-prepare_agents() {
-  local target=$1 prefix rest middle suffix
+prepare_instructions() {
+  local target=$1 kind=$2 prefix rest middle suffix rule name rule_target block
+  block="$begin"$'\n## Shared personal instructions\n'
+  if [[ "$kind" == claude ]]; then
+    block+=$'\n'
+  else
+    block+=$'\nRead and follow every rule file below before starting work. Each line contains an exact absolute path; do not resolve it against the project working directory. If a file cannot be read, report it rather than silently skipping it.\n'
+  fi
+  for rule in "${rules[@]}"; do
+    name=${rule##*/}
+    rule_target="${target%/*}/agent-skills-$name"
+    if [[ "$kind" == claude ]]; then
+      block+="@$rule_target"$'\n'
+    else
+      block+=$'\n'"- ${name%.md} absolute path: $rule_target"
+    fi
+  done
+  [[ "$kind" != claude ]] || block=${block%$'\n'}
+  block+=$'\n'"$end"
   original=''
   if [[ -L "$target" || ( -e "$target" && ! -f "$target" ) ]]; then
-    fail "CONFLICT AGENTS.md must be a regular file, not a symlink/directory: $target"
+    fail "CONFLICT instruction file must be regular, not a symlink/directory: $target"
   fi
   if [[ -f "$target" ]]; then
     cmp -s "$target" <(tr -d '\000' < "$target") || fail "Expected text without NUL bytes: $target"
@@ -101,9 +119,10 @@ prepare_agents() {
 
 # Preflight all text and link targets before creating anything, even in dry-run.
 contents=() originals=()
-for target in "${agent_files[@]}"; do
+for i in "${!agent_files[@]}"; do
+  target=${agent_files[$i]}
   check_parent "$target"
-  prepare_agents "$target"
+  prepare_instructions "$target" "${agent_kinds[$i]}"
   originals+=("$original")
   contents+=("$updated")
   if [[ "$updated" == "$original" ]]; then printf 'OK %s\n' "$target"; else printf 'UPDATE %s\n' "$target"; fi
@@ -145,4 +164,4 @@ for i in "${!agent_files[@]}"; do
   mv -f -- "$pending" "$target"
   pending=''
 done
-printf 'Installed. Existing AGENTS.md content outside our section was preserved.\n'
+printf 'Installed. Existing instruction content outside managed sections was preserved.\n'
