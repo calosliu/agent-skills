@@ -1,8 +1,8 @@
 # Personal agent tooling hardening and growth
 
 - Created: 2026-09-21
-- Updated: 2026-09-22
-- Status: In progress — local implementation through Phase 7 and high-risk 3/3 complete; remote ruleset/secret scope, third-party review, live tool cleanup, and final release checks remain
+- Updated: 2026-09-25
+- Status: In progress — local implementation through Phase 7, high-risk 3/3, and main required-check ruleset complete; third-party review, live tool cleanup, fresh-machine acceptance, and final release checks remain
 - Depends on: `.spec/2026-09-20_01_personal-agent-repo.md`
 - Goal: Turn this repository from working dotfiles into a small, secure, reproducible personal Agent toolkit for Pi, Codex, and evidence-verified Claude Code support.
 - Constraint: Do not build an Agent runtime, configuration generator, or plugin platform. Extend native discovery and plain files first.
@@ -156,7 +156,7 @@ Acceptance:
 - Conflicting global/project instructions produce the documented winner in a probe.
 - Candidate agents are not installed or advertised as working.
 
-Phase 1 remote blocker: activating a default-branch ruleset is a GitHub mutation and the required CI check does not exist remotely yet. Repository-level secret protection remains unverified until a locally approved `gh` session has suitable read scope.
+Phase 1 remote controls verified: repository secret scanning and push protection are enabled. Ruleset `main-required-offline-check` (ID 23949977) is active for `refs/heads/main` and requires GitHub Actions check `offline`. Remaining release blockers are fresh-machine acceptance and third-party/live-tool review.
 
 Phase 3 model blocker: Pi and Codex implicit skill selection pass; Claude high-risk implicit `ship-it` selection is not reliable under the tested model, so support requires explicit `/ship-it`.
 
@@ -263,7 +263,7 @@ Do not run credentialed model evals in pull-request CI. Add a framework only whe
 
 - [x] Add minimal `.github/workflows/check.yml` running `bash scripts/check.sh` on Linux with `contents: read`, checkout credential persistence disabled, and commit-pinned action.
 - [x] Keep Bash 3.2/macOS verification in the release checklist unless a second CI job proves worth its cost.
-- [ ] Make the passing offline job required by the default-branch ruleset; blocked until workflow exists remotely and the ruleset mutation is explicitly authorized.
+- [x] Make the passing offline job required by the default-branch ruleset; ruleset `main-required-offline-check` (ID 23949977) is active on `refs/heads/main` with required check `offline` and no bypass actors.
 - [x] Add `scripts/doctor.sh`: read-only checks for required commands, versions, managed blocks, link targets, stale pins, config syntax, and auth presence without printing tokens.
 - [x] Test restore in a temporary HOME: check → dry-run → install → doctor → broken-link failure → uninstall/reinstall. A fresh local `git clone --no-local` of `60fadf0` also passed check → dry-run → install → doctor; network clone/new-machine auth remains a release-machine check.
 - [x] Document rollback: checkout previous reviewed tag/commit, rerun installer, verify links and managed blocks; never roll back by deleting whole agent homes.
@@ -364,3 +364,4 @@ Accessed 2026-09-21. Prefer current first-party pages during implementation beca
 | 2026-09-22 | High-risk 3/3 completion | Added third strict local ship/preserve trial, Claude injection trial, and independent no-remote stop trial. Ledger now records 3 passes for each high-risk case; offline check enforces the count |
 | 2026-09-22 | Cross-agent implicit triggers | Pi and Codex each passed implement-spec/ship-it positive and negative selection 4/4. Claude implement response matched core workflow semantics, but implicit ship-it omitted unique contract rules; explicit /ship-it remains required and verified. No no-tool plan file was actually written |
 | 2026-09-22 | Fresh local clone restore | Cloned committed `60fadf0` with `--no-local` into a new directory and isolated HOME; check, dry-run, install, and offline doctor all passed. Network/new-machine authentication and model smoke remain release blockers |
+| 2026-09-25 | Remote protection | Verified secret scanning and push protection enabled; created and verified active ruleset `main-required-offline-check` (ID 23949977) for `main`, requiring `offline`, with no bypass actors |
