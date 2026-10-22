@@ -17,6 +17,7 @@ npm	pi-context-usage	git+https://github.com/championswimmer/pi-context-usage.git
 npm	pi-fabric	git+https://github.com/monotykamary/pi-fabric.git	0.92.33	sha512-JJ6g57ISR/q20z0qw42jhKXrgb+ewcqJWCzMVgaycFfZpydBAWhgphOjZxmXKBFgb2ecxIeCnNtgoTRYgvX/pQ==	high	2026-09-22
 npm	pi-hermes-memory	git+https://github.com/chandra447/pi-hermes-memory.git	0.9.9	sha512-6EfhmlgBuMfN7bQwN+xHMDVwX/Tm0fKKi6X8lAIBZtcjqxS9Of0rboJzmxfO3r+rGMWb71ss4p+dY34aEsJ1dg==	high	2026-09-22
 npm	pi-lens	git+https://github.com/apmantza/pi-lens.git	4.2.1	sha512-nRF5I/xdYZ1bZoOcTVCbRPV81TsCvkBdyxCtx+nZiRju76S18COFTnj8oNmSV7LAfatiRy8r5pHl0dcc0FtaAw==	medium	2026-09-22
+npm	pi-lmstudio	git+https://github.com/stakira/pi-lmstudio.git	1.5.0	sha512-Bnl9c4pmm1BrjUVI7DSPPH78H/md3XqLAx87hjMDzDnntTS5btryrXB3wLPPqgD93EsUzbfm7E9jlwmh8ChPIA==	high	2026-10-11
 npm	pi-mcp-adapter	git+https://github.com/nicobailon/pi-mcp-adapter.git	2.34.0	sha512-3YzoYQlxwKQjk4co0MMnRrhTNWzw5XsoCKCuhfZkIa9XSRBbrOLbi32yu7KOn6Unyk/K0rTof1lX/7cSLobudg==	high	2026-09-22
 npm	pi-ponytail	git+https://github.com/thelegendtubaguy/pi-ponytail.git	0.1.2	sha512-e6FCbt6856BGDJuDTVIHxv5rA9NFJ5Oz68ehWykeYRq8bZkVWuIO7FSFKmhgag8GrW2iFQJsTRj/cTEPWWN46w==	low	2026-09-22
 npm	pi-powerline-footer	git+https://github.com/nicobailon/pi-powerline-footer.git	0.17.1	sha512-zEQ5n202Y2JJ1re1UhjV6rkTGFmV/1MJ6p2c6B19RUOND/MMgvTPenOT8odugyG2Ny8T/PyXul4LrjC4ZpsztQ==	low	2026-09-22

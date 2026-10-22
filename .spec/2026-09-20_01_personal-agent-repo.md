@@ -1,8 +1,8 @@
 # Personal agent repo setup
 
 - Created: 2026-09-20
-- Updated: 2026-09-22
-- Status: In progress — live installation and model-backed acceptance passed; fresh-machine authentication/smokes, third-party skill commit pinning, and deferred skill inventory remain.
+- Updated: 2026-10-11
+- Status: Blocked on credentialed clean-machine smoke — live model acceptance and network-clone installation passed. Owner canceled the skill quota and accepted unknown historical third-party commits as a documented restoration limit.
 - Goal: Clone this repo, install once, and use shared personal guidance and portable skills in Pi and Codex.
 - Approach: Personal agent dotfiles, not another agent framework.
 
@@ -15,8 +15,8 @@ Update this file as work proceeds. Check tasks only after verification; record e
 | 1. Inventory | Complete; remote is PUBLIC, existing shared skills are third-party |
 | 2. Structure and guidance | Complete |
 | 3. Installation | Complete on this macOS host; live Pi/Codex files installed with backups and idempotence verified |
-| 4. Skill migration | Partial; two new owned skills, third-party content preserved, 3–5 owned workflows not identified |
-| 5. Verification | Offline, native discovery, linked-rule reads, and owned-skill model smokes passed; fresh-machine acceptance pending |
+| 4. Skill migration | Complete under owner-revised scope: keep implement-spec and ship-it; no numerical quota or third-party copies |
+| 5. Verification | Offline, native discovery, linked-rule reads, owned-skill model smokes, and isolated network-clone install passed; clean-machine credentialed acceptance pending |
 
 ## Target layout
 
@@ -110,10 +110,9 @@ Sources remain portable plain Markdown. Rule filenames use lowercase kebab-case;
 
 ## 4. Migrate useful workflows
 
-Original target: 3–5 regularly used owned skills, selected during inventory. Inventory found no confirmed owned skill to migrate, so this target remains deferred rather than satisfied by copying third-party installations or inventing unused workflows.
+Original target was 3–5 regularly used owned skills. Owner explicitly canceled that quantity requirement: retain `implement-spec` and `ship-it`, adding others only for concrete needs. This is a scope revision, not a claim that unperformed migrations passed.
 
-- [ ] Select 3–5 owned workflows for migration when available.
-- [ ] Migrate those owned skills into `skills/<name>/SKILL.md`.
+- [x] Record owner-revised scope: retain the two implemented owned workflows; no quota-driven migration.
 - [x] Add one newly authored portable skill, `implement-spec`, for the specification/progress workflow already used here.
 - [x] Include standard `name` and clear trigger `description` metadata; directory and skill names match.
 - [x] Keep bundled paths relative where needed; current skills have no bundled resources.
@@ -123,7 +122,7 @@ Original target: 3–5 regularly used owned skills, selected during inventory. I
 
 Keep Pi-only extensions under `agents/pi/` when needed. Other harnesses use native adapters; do not pretend extension APIs are portable. Review third-party skills and executable extensions before installation.
 
-Existing useful third-party workflows (`diagnose`, `handoff`, `write-a-skill`) remain installed outside this repo. Their upstream paths and recorded folder hashes are documented in `README.md`. Reproducible fresh-machine restoration still needs reviewed Git commit pins and a verified installation procedure.
+Existing useful third-party workflows (`diagnose`, `handoff`, `write-a-skill`) remain installed outside this repo. Their upstream paths and recorded folder hashes are documented in `README.md`. Their installed commits are unknown. Owner accepted documenting this limit instead of reconstructing old history; review and pin the chosen source at the next actual update/restore. No complete restoration claim covers these snapshots.
 
 ### Requested addition: ship-it
 
@@ -154,7 +153,7 @@ Use `scripts/check.sh` and native/manual smoke tests. Installer tests use a temp
 - [x] Both agents read/apply all referenced personal rules outside this repo through observable tool calls.
 - [x] Project-specific instructions apply alongside personal guidance; both probes returned the scratch-only verification token.
 - [x] No credentials, sessions, caches, trust decisions, or memory databases are tracked. Bounded plaintext secret-pattern scan found no matches in new implementation files; this is not a complete secret audit.
-- [ ] Fresh-machine setup is exercised end to end: clone → install → configure/authenticate locally → model-backed smoke test. Instructions are documented; clean-machine run not performed.
+- [ ] Fresh-machine setup is exercised end to end: clone → install → configure/authenticate locally → model-backed smoke test. Network clone at `5c1805d` passed check/dry-run/install/doctor/reinstall in isolated HOME; clean-machine authentication/model smoke was not performed.
 
 A successful shell script or resource-loader run does not prove model-backed execution, so fresh CLI model sessions were used. Authentication values were not read or copied. Live global files were modified only by the reviewed installer, which created exact adjacent backups.
 
@@ -189,6 +188,7 @@ Deferred until needed:
 | 2026-09-22 | Codex relative-reference repro, installer fix, Bash 3.2/current Bash checks, LSP | Initial reads failed against scratch cwd; generated absolute installed paths fixed it; both suites passed and shell diagnostics were clean |
 | 2026-09-22 | Pi/Codex fresh-session instruction and skill probes | All three personal rules plus project token read; implement-spec succeeded in disposable repos; ship-it stopped safely with no remote and no repository mutation |
 | 2026-09-22 | Fresh local clone of `60fadf0` with isolated HOME | `git clone --no-local` followed by check, dry-run, install, and offline doctor all passed; real new-machine auth/model smoke remains pending |
+| 2026-09-25 | Fresh network clone of public `main` at `5c1805d` | Isolated HOME check, dry-run, install, offline doctor, idempotent reinstall and cleanup passed; no credentials copied; credentialed model smoke remains pending |
 
 Native probe used an ephemeral test program calling the installed Pi SDK and Codex app-server. It inspected actual loader output, not model claims. Repeatable model-backed smoke procedure is in `README.md`; `scripts/check.sh` remains dependency-free and does not require installed agents.
 
@@ -206,8 +206,8 @@ Native probe used an ephemeral test program calling the installed Pi SDK and Cod
 
 ## Blockers and next actions
 
-1. **Skill ownership:** existing shared skills outside this repo remain third-party. Keep them external and identify owned workflows before completing the original 3–5 target.
-2. **Third-party reproducibility:** recorded skill-folder hashes are not verified Git refs. Resolve reviewed upstream commit pins before claiming full restoration.
+1. **Skill scope (resolved):** owner canceled the original 3–5 target. Keep the two implemented owned skills; existing third-party skills remain external.
+2. **Third-party reproducibility (accepted limit):** old installed commits are unknown; folder hashes are not Git refs. Owner accepted event-driven pinning on actual update/restore, not historical reconstruction. Full restoration remains unclaimed.
 3. **Fresh machine:** exercise full setup on a clean environment. Linux behavior is intended but not tested on a Linux host; tested platform is macOS.
 4. **Model variability:** Pi gpt-5.3-codex-spark ignored explicit linked-rule read requests while gpt-5.5 passed. Behavioral support claims must name the tested model/configuration.
 5. **Orca environment:** Orca injects a runtime `CODEX_HOME` with symlinked AGENTS.md. Installer fails closed there; use canonical `CODEX_HOME=$HOME/.codex` only after verifying both paths resolve to the same file.
