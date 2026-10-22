@@ -1,8 +1,8 @@
 # Personal agent tooling hardening and growth
 
 - Created: 2026-09-21
-- Updated: 2026-09-25
-- Status: In progress — local implementation through Phase 7, high-risk 3/3, and main required-check ruleset complete; third-party review, live tool cleanup, fresh-machine acceptance, and final release checks remain
+- Updated: 2026-10-11
+- Status: Blocked on credentialed clean-machine smoke — owner retained Hypa/LM Studio and canceled the skill quota; bounded source audit completed. Old unknown skill commits and unreviewed live version drift are accepted documented limits, not verified current artifacts.
 - Depends on: `.spec/2026-09-20_01_personal-agent-repo.md`
 - Goal: Turn this repository from working dotfiles into a small, secure, reproducible personal Agent toolkit for Pi, Codex, and evidence-verified Claude Code support.
 - Constraint: Do not build an Agent runtime, configuration generator, or plugin platform. Extend native discovery and plain files first.
@@ -128,10 +128,10 @@ Phase 0 evidence and limitations:
 
 ### 1.2 Hard controls
 
-- [ ] Add a GitHub ruleset targeting the default branch: require PR, block force pushes and deletion, require the offline check once CI exists.
-- [ ] Verify whether repository-level secret protection is available; document GitHub user push protection and its limitations.
+- [x] Add a GitHub ruleset targeting the default branch: require PR, block force pushes and deletion, and require the offline check. Verified active as `main-required-offline-check` (ID 23949977).
+- [x] Verify repository-level secret scanning/push protection and document user push-protection limits; verified enabled in 2026-09-25 remote audit.
 - [x] Keep Codex example at workspace-write/on-request or a narrower supported permission profile; deny sensitive paths when the installed version supports it.
-- [ ] Add equivalent least-privilege Pi/Claude examples only for verified, stable settings.
+- [x] Review config-example scope: sanitized Pi example exists; Claude settings are intentionally untouched and no stable setting is required by the installer. No speculative Claude example added.
 - [x] Require explicit approval for push, PR mutation, package installation, credentials, remote MCP, and destructive commands.
 - [x] Add a deterministic regression that rejects committed credentials, absolute machine paths, trust overrides, and unsafe example modes.
 
@@ -178,7 +178,7 @@ Work:
 - [x] Add positive and negative trigger cases for each skill. Structural coverage is offline; Pi/gpt-5.5 model probes verified both positive reads and negative non-reads.
 - [x] Add and execute the `implement-spec` outcome case: requested file changed, spec evidence updated, unrelated file preserved.
 - [x] Add and execute `ship-it` outcomes against disposable local bare remotes/fake `gh`: feature branch only, exact path committed, concrete failed check stops commit/push/PR, existing PR reused, `main` never pushed.
-- [ ] Review third-party skills before use; never vendor them into this repo.
+- [x] Read-only first-pass review/disposition of installed third-party skills recorded in the 2026-09-25 closeout spec; exact installed upstream commits remain unresolved before reproducible restoration or updates. No vendor copies added.
 - [x] Review skill size/navigation before splitting. Both remain single-purpose and readable; no speculative resource split added.
 
 Acceptance:
@@ -209,7 +209,7 @@ Rules:
 ### 4.2 Tool/MCP policy
 
 - [x] Inventory observed extensions, hooks/MCP boundary, and external CLIs by capability and side-effect class in `agents/tool-policy.md`; machine-local endpoints remain excluded from support claims until audited.
-- [ ] Disable duplicate or unused live tools; one capability should have one default path. Policy selects defaults, but live settings were not mutated.
+- [x] Review duplicate candidates and record owner disposition: `pi-fff` remains default search; user chose to retain optional `pi-hypa` and `pi-lmstudio`. No live config changed.
 - [x] Prefer local/read-only tools. Enable network/write access per task, not globally.
 - [x] For any remote MCP, require operator, data sent, scopes, auth method, write tools, and revocation procedure. No MCP is installed by this repository.
 - [x] Reject token passthrough, broad wildcard scopes, silent consent, and unreviewed metadata changes.
@@ -303,15 +303,16 @@ Each step must leave `bash scripts/check.sh` passing and update this checklist/e
 
 ## Final acceptance
 
-- [ ] Original setup acceptance is closed or explicitly blocked with evidence.
-- [ ] `main` requires PRs, rejects force pushes, and requires offline checks.
-- [ ] Fresh clone installs and restores safely in a temporary HOME.
-- [ ] Pi and Codex pass instruction and owned-skill model smoke cases.
-- [ ] Any additional supported agent passes the same class of checks.
-- [ ] All third-party executable sources are exact-pinned and reviewed.
-- [ ] High-risk cases achieve 3/3 safe isolated outcomes.
-- [ ] No secrets, auth state, trust decisions, raw transcripts, or machine paths are tracked.
-- [ ] README explains install, doctor, update, rollback, support status, and security boundaries.
+- [x] Original setup acceptance is explicitly blocked with evidence in `.spec/2026-09-20_01_personal-agent-repo.md`: clean-machine credentialed smoke. Owner canceled the migration quantity target and accepted unknown historical revisions as a documented restoration limit.
+- [x] `main` requires PRs, rejects force pushes, and requires offline checks (ruleset 23949977 verified).
+- [x] Fresh network clone installs/restores safely in isolated temporary HOME; evidence recorded 2026-09-25.
+- [x] Pi and Codex pass instruction and owned-skill model smoke cases; evidence is recorded in the support matrix and this spec.
+- [x] Claude Code passed documented explicit high-risk workflows and precedence smoke; implicit `/ship-it` remains unsupported and is documented as an invocation constraint.
+- [x] Owner-revised audit acceptance: retain exact reviewed baseline pins and the verified LM Studio artifact; explicitly record old skill commits as unknown and live version drift as unreviewed. Audit selected versions on actual update/restore; do not claim every live executable is pinned/reviewed.
+- [ ] Complete independent clean-environment authentication and model smoke without copying live credentials.
+- [x] High-risk cases achieve 3/3 safe isolated outcomes; offline gate enforces the count.
+- [x] No secrets, auth state, trust decisions, raw transcripts, or machine paths are tracked; bounded secret/path checks pass.
+- [x] README explains install, doctor, update, rollback, support status, and security boundaries.
 
 ## Deferred / non-goals
 
@@ -365,3 +366,5 @@ Accessed 2026-09-21. Prefer current first-party pages during implementation beca
 | 2026-09-22 | Cross-agent implicit triggers | Pi and Codex each passed implement-spec/ship-it positive and negative selection 4/4. Claude implement response matched core workflow semantics, but implicit ship-it omitted unique contract rules; explicit /ship-it remains required and verified. No no-tool plan file was actually written |
 | 2026-09-22 | Fresh local clone restore | Cloned committed `60fadf0` with `--no-local` into a new directory and isolated HOME; check, dry-run, install, and offline doctor all passed. Network/new-machine authentication and model smoke remain release blockers |
 | 2026-09-25 | Remote protection | Verified secret scanning and push protection enabled; created and verified active ruleset `main-required-offline-check` (ID 23949977) for `main`, requiring `offline`, with no bypass actors |
+| 2026-09-30 | Plan reconciliation | Updated completed acceptance items from recorded evidence; recorded owner decision to retain Hypa and LM Studio; exact skill snapshot pins and authenticated clean-machine smoke remain blockers |
+| 2026-10-11 | LM Studio audit and scope revision | Verified npm 1.5.0 metadata/tarball integrity and all five installed release files; reviewed implementation and mocked discovery/auth/offline behavior, including malformed-entry token logging risk. Added exact audit-lock row; owner canceled skill quota; no live settings/install changes |
